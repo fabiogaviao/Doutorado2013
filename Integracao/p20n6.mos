@@ -1,0 +1,86 @@
+! SCP não unicusto gerado a partir de F de um problema com P = 10 dias e N = 6 
+! viagens por dia.
+
+model p20n6
+	
+uses "mmxprs"; !gain access to the Xpress-Optimizer solver
+
+
+!sample declarations section
+declarations
+! inicializações
+	! Índices
+	linha = 1..120
+	coluna = 1..3246
+	
+	! Vetores e matrizes de onde os dados serão lidos
+	CUSTO  : array(coluna) of integer
+	MATCOB : array(linha,coluna) of integer
+	! Variáveis de decisão
+	x : array(coluna) of mpvar
+	
+	! solução
+	x_sol : array(coluna) of real
+	z_sol : real
+end-declarations
+
+forall (j in coluna) x(j) is_binary
+
+
+! PROBLEMA leitura
+initializations from './Dados/Otimizacao/P20N6/scpP20N6.dat'
+	CUSTO MATCOB
+end-initializations
+
+! f.o.
+z:= sum(j in coluna) CUSTO(j) * x(j)
+
+!restrições
+forall(i in linha) sum(j in coluna) MATCOB(i,j) * x(j) >= 1
+
+! otimizar
+minimize(z)
+
+writeln("Formulação do problema:")
+exportprob(EP_MIN, "p20n6",z)
+!exportprob(EP_MIN, "",z)
+writeln("A[i][j] = ")
+forall(i in linha) do
+	forall(j in coluna)
+		write(MATCOB(i,j), ' ')
+	writeln
+end-do
+writeln
+
+writeln("Executando o solver")
+writeln
+writeln("--------------------------------------------------")
+writeln("RESULTADO")
+if(getprobstat=XPRS_OPT) then
+	writeln('Otimo atingido!')
+	forall(j in coluna)
+		if getsol(x(j)) = 1 then
+			writeln("x(", j, ") = ", getsol(x(j)))
+		end-if
+	writeln("z = ", getobjval);
+	writeln
+else
+	writeln('otimo não atingido!')		
+end-if		
+writeln("--------------------------------------------------")
+
+writeln("Fim de execução do otimizador")
+
+forall(j in coluna) 
+	if getsol(x(j)) = 1 then
+		x_sol(j) := j
+	end-if	
+z_sol := getobjval
+
+! SOLUÇÃO escrita
+initializations to './Dados/Otimizacao/P20N6/p20n6.sol'
+	x_sol
+	z_sol
+end-initializations
+
+end-model

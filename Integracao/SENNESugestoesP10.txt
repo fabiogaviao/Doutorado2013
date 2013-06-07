@@ -1,0 +1,6 @@
+OK, Gavião.
+Estamos indo bem. Fico aguardando o cap 3 para revisar.
+Mais tarde, quando sobrar um tempinho, gostaria de tentar resolver um problema ainda pequeno, mas um pouco maior.
+Existe a possibilidade de usar esse exemplar com N = 6 para um valor maior de P? Por exemplo, P = 10 ou 20?
+Outra ideia seria montar um exemplar com N um pouco maior (10 ou 20, por exemplo).
+Curiosidade: qual foi o tempo de execução do XPRESS para esse exemplar (N = 6, P = 5)?

@@ -1,0 +1,38 @@
+//---------------------------------------------------------------------------
+#ifndef ControleH
+#define ControleH
+//---------------------------------------------------------------------------
+//#include "..\..\Doutorado2012\pCltEtt\Projeto\Construtiva\ModelagemPorGrafo\FormularioResumo.h"
+//#include "..\..\Doutorado2012\pCltEtt\Projeto\Construtiva\ModelagemPorGrafo\FormularioPesoInicial.h"
+#include "..\..\Doutorado2012\pCltEtt\Projeto\Construtiva\ModelagemPorGrafo\Grafo.h"
+//#include ".\Construtiva\ModelagemPorGrafo\FormularioResumo.h"
+//#include ".\Construtiva\ModelagemPorGrafo\FormularioPesoInicial.h"
+//#include ".\Construtiva\ModelagemPorGrafo\Grafo.h"
+#include "LeitorSCP.h"
+#include "AlgoritmoGenetico.h"
+#include <time.h>
+#include <stdio.h>
+#include <dos.h>
+
+class Controle
+{
+private:
+//Qualificação
+   void  executarPreprocessamento();
+   void  executarGenetico(void);
+   time_t   TempoInicial, TempoFinal;
+   void  imprimirContagemDeTempo(void);
+public:
+   Controle()
+   {
+      TempoInicial = (time_t)0;
+      TempoFinal   = (time_t)0;
+   }
+   ~Controle()
+   {
+   }
+   void ativar(void);
+}; /* Fim da classe Controle() */
+/*******************************/
+//---------------------------------------------------------------------------
+#endif

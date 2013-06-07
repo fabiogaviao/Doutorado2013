@@ -1,0 +1,92 @@
+Em: 09 DE MARÇO DE 2013
+-----------------------
+Retirado método construirGrafoTransicao() -> era o antigo construtor do Gt. O novo é o construirGt.
+-----------------------
+Retirado método gerarMatrizDeCobertura() -> era o que criava os filtros e os fazia caminhar na estrutura do grafo para gerar escalas de todas as subregiões. Foi substituído por outro que percorre caminhos aleatórios.
+Os objetivos desta gerarMatrizDeCobertura() eram:
+    * Objetivos:
+    * Gerar os coeficientes da matriz
+    * de cobertura (MatCab)através da aplicação da heurística de
+    * criação de trajetos no Gt.
+    *
+    * O Gt já considera a variacao
+    * de demanda que a empresa tem devido
+    * a sazonalidade da escala!
+    *
+    * A heurística cria trajetos a partir do vértice mais
+    * a esquerda do primeiro dia e direciona as trajetórias
+    * para passar extremamente à direita do Gt (nos ultimos 3 vertices
+    * de cada camada). Segue vertice a vertice na primeira camada
+    * até o último vértice do primeiro dia.
+    *
+    * Testa a qualidade do trajeto percorrido utilizando os seguintes
+    * critérios os quais já foram definidos à priori:
+    *
+    * 1o. critério - Numero de dias da escala não pode ser menor do
+    * que o número de dias do rostering.
+    *
+    * 2o. critério - a quantidade de viagens da escala com
+    * duração entre a média mais ou menos o desvio padrão
+    * tem que ser acima de 70% do total de viagens da escala.
+    *
+    * 3o. critério - a duração da viagem, isto é, a soma
+    * da duração de todas as viagens de uma escala não pode
+    * ser maior nem menor do que os limites mínimos e máximos
+    * de duração ideal estipulado à princípio pela empresa.
+    *
+    * Estando dentro dos tres critérios, a nova escala
+    * qualificada é transformada num objeto string e
+    * adicionada como tal num vetor de objetos string
+    * denominado vetor de escalas viáveis, ou simplesmente vev[].
+    *
+    * A cada loop do while são gerados tres mil percorrimentos
+    * por vertice. Serão geradas (3.000 x nve) escalas desta forma.
+    * Se ainda não cobrir tudo um procedimento de
+    * filtragem dinamica é disparado para aleatoriamente encontrar
+    * novos trajetos que poderão cobrir todas as viagens diárias.
+    * O procedimento de filtragem põe obstáculos naturais nos caminhos do          * grafo
+    * Gt (chamados de "janelas de passagem e janelas de bloqueio").
+    * Uma variável controla o número de tentativas que serão feitas
+    * com estes filtros móveis.
+    * Se o número de tentativas de deslocamento dos filtros
+    * chegar a um valor estipulado (150)
+    * e ainda houver linhas da matriz ainda não cobertas, o próximo
+    * passo é descobrir os índices dessas linhas e disparar novos
+    * percorrimentos para cobrí-las usando um algoritmo do tipo GRASP,
+    * o qual parte do vertice não coberto e percorre o grafo em dois
+    * sentidos: do dia do vertice corrente para o dia inicial e, depois,
+    * do dia do vértice corrente para o ultimo dia do grafo.
+    * Para decidir entre os vértices prováveis qual o próximo,
+    * emprega um procedimento randomico ganancioso.
+    * Depois que preenche uma trajetória completa, uma nova
+    * verificação de cobertura é realizada e estando todas as linhas
+    * devidamente cobertas, o próximo passo é eliminar as colunas
+    * redundantes.
+    *
+    * Uma coluna é dita redundante (tentar usar notação da teoria
+    * de conjuntos para ficar bem especificado) quando:
+    * i) seja L o conjunto que contém as quantidades de vezes que cada linha
+    *    é coberta
+    * ii) Seja S o conjunto de indices das colunas da matriz de cobertura
+    * iii) Seja R := S
+    * iv) selecione j pertencente a R
+    * v) Seja I o cj de linhas e J o cj das colunas
+    * vi) Seja Gama(j) a coluna da matriz de cobertura
+    * vii) Para todo j pertencente a R, faca R := R - j.
+    * viii) Se l(i) >= 2 para qqs Gama(j), atribua
+    * S := S - j e l(i) := l(i) - 1 qqs i pertencente a Gama(j)
+    * Em outras palavras:
+    * percorra todas as colunas da matriz e para cada coluna
+    * a linha com valor igual a 1 apresentar número de cobertura
+    * maior ou igual a 2, retire a coluna da matriz de cobertura
+    * caso contrário  selecione a proxima coluna e assim sucessivamente
+    * até a ultima coluna.
+    *************************************************************/
+-----------------------
+
+
+
+
+
+
+-----------------------

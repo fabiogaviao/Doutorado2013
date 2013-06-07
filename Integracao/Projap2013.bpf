@@ -1,0 +1,11 @@
+USEUNIT("ap2013.cpp");
+USEUNIT("Controle.cpp");
+USEUNIT("AlgoritmoGenetico.cpp");
+USEUNIT("LeitorSCP.cpp");
+USEUNIT("..\..\Doutorado2012\pCltEtt\Projeto\Construtiva\ModelagemPorGrafo\Grafo.cpp");
+USEUNIT("..\..\Doutorado2012\pCltEtt\Projeto\Construtiva\ModelagemPorGrafo\DistribuidorDePeso.cpp");
+USE("..\..\Doutorado2012\pCltEtt\Projeto\Construtiva\ModelagemPorGrafo\ParametroFaseConstrutiva.h", File);
+//---------------------------------------------------------------------------
+This file is used by the project manager only and should be treated like the project file
+
+main

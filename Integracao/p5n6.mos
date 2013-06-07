@@ -1,0 +1,67 @@
+! SCP não unicusto gerado a partir de F de um problema com P = 5 dias e N = 6 
+! viagens por dia.
+
+model p5n6
+	
+uses "mmxprs"; !gain access to the Xpress-Optimizer solver
+
+
+!sample declarations section
+declarations
+! inicializações
+	! Índices
+	linha = 1..30
+	coluna = 1..27
+	
+	! Vetores e matrizes
+	CUSTO  : array(coluna) of integer
+	MATCOB : array(linha,coluna) of integer
+	
+	! Variáveis de decisão
+	x : array(coluna) of mpvar
+end-declarations
+
+forall (i in coluna) x(i) is_binary
+
+initializations from '..\Construtiva\scp.dat'
+	CUSTO MATCOB
+end-initializations
+
+! f.o.
+z:= sum(j in coluna) CUSTO(j) * x(j)
+
+!restrições
+forall(i in linha) sum(j in coluna) MATCOB(i,j) * x(j) >= 1
+
+! otimizar
+minimize(z)
+
+writeln("Formulação do problema:")
+exportprob(EP_MIN, "p5n6ModeloGeradoPeloXpress",z)
+!exportprob(EP_MIN, "",z)
+writeln("A[i][j] = ")
+forall(i in linha) do
+	forall(j in coluna)
+		write(MATCOB(i,j), ' ')
+	writeln
+end-do
+writeln
+
+writeln("Executando o solver")
+writeln
+writeln("--------------------------------------------------")
+writeln("RESULTADO")
+if(getprobstat=XPRS_OPT) then
+	writeln('Otimo atingido!')
+	forall(j in coluna)
+		writeln("x(", j, ") = ", getsol(x(j)))
+	writeln("z = ", getobjval);
+	writeln
+else
+	writeln('otimo não atingido!')		
+end-if		
+writeln("--------------------------------------------------")
+
+writeln("Fim de execução do otimizador")
+
+end-model

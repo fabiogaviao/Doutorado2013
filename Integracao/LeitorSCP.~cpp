@@ -1,0 +1,157 @@
+//---------------------------------------------------------------------------
+
+#pragma hdrstop
+
+#include "LeitorSCP.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+/*********************************************************/
+void LeitorSCP::lerProblemaScp(void)
+/*************************************************************
+ * Revisão: 23-mar-2013 - Alterado para usar o nome do problema
+ *          que já está dentro da classe ao invés de recebe-
+ *          lo do chamador.
+ ************************************************************/
+{
+   ifstream *pIfs = new ifstream(PROBLEMA, ios::in);
+   assert(pIfs);
+   // Carrega para a memoria em tempo de execução
+   pIfs->rdbuf();
+   // Lê o número de linhas primeiro e o número de colunas em seguida
+   (*pIfs) >> nlinhas >> ncolunas;
+   // Lê os coeficientes da função objetivo
+   lerFO(pIfs);
+   // Lê os coeficientes da matriz de incidência
+   lerAij(pIfs);
+   // Acabado serviço com arquivo de entrada fecha-o
+   // e deleta o fluxo de entrada utilizado.
+   pIfs->close();
+   if(pIfs)
+      delete pIfs;
+} /* Fim do método LeitorSCP() */
+/*******************************/
+
+/********************************************/
+void  LeitorSCP::lerFO(ifstream *pIfs)
+/********************************************
+ * Objetivos: Ler os coeficientes da função
+ * objetivo do problema no arquivo beasley.txt
+ * e transfere para a área privada (pFO).
+ *******************************************/
+{
+   // instancia vetor de inteiros para armazenar
+   // valores dos coeficientes da funcao objetivo
+   pFO = new int[ncolunas];
+   assert(pFO);
+   for(int j = 0; j < ncolunas; ++j)
+      (*pIfs) >> pFO[j];
+//   assert(pFO[999] == TAMANHO_PI_SUGERIDO); // Debug para ver se leu o ultimo coeficiente
+} /* Fim do lerFO() */
+/********************/
+
+/********************************************/
+void LeitorSCP::lerAij(ifstream *pIfs)
+/**************************************************
+ * Objetivos: le os coeficientes da matriz de
+ * incidencia (cobertura)
+ * Número de linhas e de colunas já lidos antes
+ * Coeficientes da matriz de incidencia: pAij
+ **************************************************/
+{
+   // instancia a matriz de cobertura com 0s
+   try
+   {
+      pAij = new int * [nlinhas];
+      for(int i = 0; i < nlinhas; ++i)
+      {
+         pAij[i] = new int [ncolunas];
+         for(int j = 0; j < ncolunas; ++j)
+            pAij[i][j] = 0;
+      }
+   }
+   catch(bad_alloc)
+   {
+      cerr << "Nao pode alocar espaco para a Aij!";
+      exit(-1);
+   }
+
+   // Le os coeficientes e põe em pAij
+   int QtdeDeCobertura, // qtas colunas estão cobrindo a linha 'i'
+       ColunaDoUm,      // a coluna que cobre
+       i;               // índice de i que deve ir de 0 até nlinhas
+                        // pois todas as linhas tem que estar coberta
+                        // ao menos uma vez senão o problema não tem
+                        // solução!
+   i = 0;
+   while(!pIfs->eof())
+   {
+      if(pIfs->eof())
+         break;
+      (*pIfs) >> QtdeDeCobertura;
+      for(int j = 0; j < QtdeDeCobertura; ++j)
+      {
+         (*pIfs) >> ColunaDoUm;
+         pAij[i][ColunaDoUm - 1] = 1;
+      }
+      ++i;
+   }
+} /* fim do lerAij() */
+/*********************/
+
+/*********************************************************************/
+void LeitorSCP::mostrarSolucao(InstanciaProblema ip, bitset<NUMERO_COLUNAS> &ASolucao)
+/**********************************************************************
+ * Objetivos: mostrar as colunas da solução final
+ * e o valor da função objetivo correspondente.
+ *********************************************************************/
+{
+//   system("pause");
+   cout << "-----------------------------\
+-------------------------------" << endl;
+
+   // Imprimir as colunas da solucao
+   for(int j = 0, i = 0; j < NUMERO_COLUNAS; ++j)
+      if(ASolucao.test(j))
+      {
+         if( !(i % 14))
+            cout << endl;
+         cout << j << " ";
+         ++i;
+      }
+
+   // Imprimir o valor da FO
+   cout << endl << endl;
+   int   total = 0;
+   for( int j = 0; j < NUMERO_COLUNAS; ++j)
+      if(ASolucao.test(j))
+         total += pFO[j];
+   cout << "FO = " << total << endl;
+
+   // Gravar em arquivo
+   string Frase = "";
+   Frase += ".\\Dados\\Otimizacao\\P10N6\\SolucaoGA";
+//   Frase += "P" + ip.nlinhas;
+//   Frase += "N" + ip.ncolunas;
+   Frase += ".txt";
+   ofstream *pOfs = new ofstream(Frase.c_str(),ios::out | ios::trunc);
+   assert(pOfs);
+
+   (*pOfs) << "Solucao do problema:" << endl;
+   (*pOfs) << "FO = " << total << endl;
+   // Imprimir as colunas da solucao
+   for(int j = 0, i = 0; j < NUMERO_COLUNAS; ++j)
+      if(ASolucao.test(j))
+      {
+         if( !(i % 14))
+            (*pOfs) << endl;
+         (*pOfs) << j << " ";
+         ++i;
+      }
+   (*pOfs) << endl;
+   pOfs->close();
+   if(pOfs)
+      delete pOfs;
+
+//   system("pause");
+} /* fim do mostrarSolucao() */
+/*****************************/
